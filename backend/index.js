@@ -61,8 +61,9 @@ app.post('/api/lessons', (request, response, next) => {
     fName: body.fName,
     lName: body.lName,
     email: body.email,
-    date: body.date,
-    time: body.time
+    start: body.start,
+    end: body.end,
+    length: body.length
   });
 
   lesson.save().then((savedLesson) => {

@@ -28,9 +28,19 @@ const lessonSchema = new mongoose.Schema({
     minLength: 5,
     required: true
   },
-  date: {
+  start: {
     type: Date,
     min: new Date().toISOString(),
+    required: true,
+  },
+  end: {
+    type: Date,
+    required: true,
+  },
+  length: {
+    type: Number,
+    min: 1.0,
+    max: 100.0,
     required: true,
   },
 })

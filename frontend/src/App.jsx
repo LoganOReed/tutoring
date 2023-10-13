@@ -12,11 +12,11 @@ function Filter({ filter, setFilter }) {
   )
 }
 
-function ContactForm({ firstName, setFirstName, lastName, setLastName, email, setEmail, date, setDate, time, setTime, addNewLesson }) {
+function ContactForm({ firstName, setFirstName, lastName, setLastName, email, setEmail, date, setDate, startTime, setStartTime, endTime, setEndTime, addNewLesson }) {
 
   return (
     <div className="flex flex-col items-center justify-center p-12">
-      <div className="mx-auto w-full max-w-[550px]">
+      <div className="mx-auto w-full max-w-[640px]">
         <form onSubmit={addNewLesson}>
           <div className="-mx-3 flex flex-wrap">
             <div className="w-full px-3 sm:w-1/2">
@@ -53,7 +53,7 @@ function ContactForm({ firstName, setFirstName, lastName, setLastName, email, se
             </div>
           <div className="mb-5">
             <label htmlFor="email" className="mb-3 block text-white">
-              What email would you like me to contact?
+              What email should recieve the meeting link?
               </label>
             <input 
               name="email"
@@ -66,7 +66,7 @@ function ContactForm({ firstName, setFirstName, lastName, setLastName, email, se
             />
             </div>
     <div className="-mx-3 flex flex-wrap">
-            <div className="w-full px-3 sm:w-1/2">
+            <div className="w-full px-3 sm:w-1/3">
               <div className="mb-5">
                 <label
                   htmlFor="date"
@@ -85,24 +85,45 @@ function ContactForm({ firstName, setFirstName, lastName, setLastName, email, se
                 />
               </div>
             </div>
-            <div className="w-full px-3 sm:w-1/2">
+            <div className="w-full px-3 sm:w-1/3">
               <div className="mb-5">
                 <label
-                  htmlFor="time"
+                  htmlFor="startTime"
                   className="mb-3 block text-white"
                 >
-                  Time
+                  Start
                 </label>
                 <input
                   type="time"
-                  name="time"
-                  id="time"
+                  name="startTime"
+                  id="startTime"
                   step="900"
                   min="11:00"
                   max="22:00"
                   className="font-sans border border-dark-gray bg-dark-gray text-white placeholder-white rounded-md px-6 py-3 w-full focus:border-dark-gray focus:ring-dark-gray focus:shadow-md"
-                  value={time}
-                  onChange={e => setTime(e.target.value)}
+                  value={startTime}
+                  onChange={e => setStartTime(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="w-full px-3 sm:w-1/3">
+              <div className="mb-5">
+                <label
+                  htmlFor="endTime"
+                  className="mb-3 block text-white"
+                >
+                  End
+                </label>
+                <input
+                  type="time"
+                  name="endTime"
+                  id="endTime"
+                  step="900"
+                  min="11:00"
+                  max="22:00"
+                  className="font-sans border border-dark-gray bg-dark-gray text-white placeholder-white rounded-md px-6 py-3 w-full focus:border-dark-gray focus:ring-dark-gray focus:shadow-md"
+                  value={endTime}
+                  onChange={e => setEndTime(e.target.value)}
                 />
               </div>
             </div>
@@ -113,9 +134,6 @@ function ContactForm({ firstName, setFirstName, lastName, setLastName, email, se
         </form>
       </div>
     </div>
-            // <input name="date" type="date" className="font-sans border border-dark-gray bg-dark-gray text-white placeholder-white rounded-md px-4 py-2 mb-2" placeholder="" value={newNumber} onChange={e => setNewNumber(e.target.value)} />
-            // <input name="time" type="datetime-local" className="font-sans border border-dark-gray bg-dark-gray text-white placeholder-white rounded-md px-4 py-2 mb-2" />
-            // <button type="submit" className=" w-full border border-purple bg-purple text-white text-center rounded-md px-4 py-2 ">Add</button>
   )
 }
 
@@ -143,7 +161,8 @@ function App() {
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [date, setDate] = useState('')
-  const [time, setTime] = useState('')
+  const [startTime, setStartTime] = useState('')
+  const [endTime, setEndTime] = useState('')
   const [filter, setFilter] = useState('')
 
   useEffect(() => {
@@ -162,15 +181,19 @@ function App() {
       alert(`${firstName} ${lastName} is already added to phonebook`)
     }
     else {
+      const startDate = new Date(date + "T" + startTime)
+      const endDate = new Date(date + "T" + endTime)
+      const timeDiff = Math.abs(startDate - endDate) / 36e5
       lessonsService
-        .create({ fName: firstName, lName: lastName, email: email, date: new Date(date + "T" + time) })
+        .create({ fName: firstName, lName: lastName, email: email, start: startDate, end: endDate, length: timeDiff })
         .then(response => {
           setLessons(lessons.concat(response.data))
           setFirstName('')
           setLastName('')
           setEmail('')
           setDate('')
-          setTime('')
+          setStartTime('')
+          setEndTime('')
         })
     }
   }
@@ -198,7 +221,8 @@ function App() {
           lastName={lastName} setLastName={setLastName}
           email={email} setEmail={setEmail}
           date={date} setDate={setDate}
-          time={time} setTime={setTime}
+          startTime={startTime} setStartTime={setStartTime}
+          endTime={endTime} setEndTime={setEndTime}
           addNewLesson={addNewLesson}
         />
         <h2>Numbers</h2>
